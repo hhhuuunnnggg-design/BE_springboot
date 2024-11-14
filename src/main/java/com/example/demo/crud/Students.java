@@ -1,11 +1,11 @@
 package com.example.demo.crud;
 
-public class student {
+public class Students {
     private int id;
     private String name;
     private int code;
 
-    public student(int id, String name, int code) {
+    public Students(int id, String name, int code) {
         this.id = id;
         this.name = name;
         this.code = code;
@@ -34,5 +34,4 @@ public class student {
     public void setCode(int code) {
         this.code = code;
     }
-
 }
