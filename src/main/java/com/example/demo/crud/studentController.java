@@ -7,13 +7,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+@RequestMapping("/students")
 @RestController
 public class studentController {
     private List<Students> students = new ArrayList<>(
@@ -23,7 +19,7 @@ public class studentController {
                     new Students(3, "duy", 5)));
 
     // view
-    @GetMapping("/students")
+    @GetMapping("")
     public List<Students> getStudents() {
         return students;
     }
@@ -49,12 +45,12 @@ public class studentController {
     }
 
     // xóa sinh viên theo id
-    @DeleteMapping("/student/delete/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Object> deleteStudent(@PathVariable int id) {
         return students.stream().filter(e -> e.getId() == id).findFirst()
                 .map(s -> {
                     students.remove(s);
-                    return ResponseEntity.ok().build();
+                        return ResponseEntity.ok().build();
                 }).orElse(ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Mã này không tồn tại để xóa"));
     }
 
