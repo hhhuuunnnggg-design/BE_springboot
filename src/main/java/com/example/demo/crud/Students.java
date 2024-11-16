@@ -1,37 +1,24 @@
 package com.example.demo.crud;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.*;
+import lombok.NoArgsConstructor;
+import lombok.experimental.FieldDefaults;
+
+import java.time.LocalDate;
+import java.util.Date;
+
+@Getter
+@Setter
+@AllArgsConstructor // tạo constructor có tham số
+@NoArgsConstructor  // tạo constructor không tham số
+//@RequiredArgsConstructor // tạo ra cho những thằng final
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Students {
-    private int id;
-    private String name;
-    private int code;
-
-    public Students(int id, String name, int code) {
-        this.id = id;
-        this.name = name;
-        this.code = code;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getCode() {
-        return code;
-    }
-
-    public void setCode(int code) {
-        this.code = code;
-    }
+     int id;
+     String name;
+     int code;
+     String numberPhone;
+    LocalDate birthDate;
 }
