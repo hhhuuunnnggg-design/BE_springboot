@@ -2,11 +2,9 @@ package com.example.demo.Service.impl;
 
 import java.util.List;
 
-import com.example.demo.exception.ApiException;
-import com.example.demo.exception.ErrorCode;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.Model.Student;
+import com.example.demo.Model.Employee;
 import com.example.demo.Repository.impl.StudentRepository;
 import com.example.demo.Service.IstudentService;
 
@@ -15,22 +13,22 @@ public class StudentService implements IstudentService {
     StudentRepository studentRepository = new StudentRepository();
 
     @Override
-    public List<Student> findAll() {
+    public List<Employee> findAll() {
         return this.studentRepository.findAll();
     }
 
     @Override
-    public Student findById(Integer id) {
+    public Employee findById(int id) {
         return this.studentRepository.findById(id);
     }
 
     @Override
-    public Student save(Student student) {
+    public Employee save(Employee student) {
         return this.studentRepository.save(student);
     }
 
     @Override
-    public Student updateStudentById(Integer id, Student student) {
+    public Employee updateStudentById(Integer id, Employee student) {
         return this.studentRepository.updateStudentById(id, student);
     }
 
@@ -40,8 +38,9 @@ public class StudentService implements IstudentService {
     }
 
     @Override
-    public List<Student> searchStudents(String name, String phone, String startDate, String endDate, String gender) {
-        return this.studentRepository.searchStudents(name, phone, startDate, endDate, gender);
+    public List<Employee> searchStudents(String name, String phone, String startDate, String endDate, String gender,
+            String tienluong) {
+        return this.studentRepository.searchStudents(name, phone, startDate, endDate, gender, tienluong);
     }
 
 }

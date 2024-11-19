@@ -1,7 +1,12 @@
 package com.example.demo.Model.enums;
 
 public enum Gender {
-    Nam,
-    Nu,
-    Khac
+    Male,
+    Female,
+    Other;
+
+    Object toLowerCase() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'toLowerCase'");
+    }
 }

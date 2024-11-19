@@ -2,18 +2,19 @@ package com.example.demo.Repository;
 
 import java.util.List;
 
-import com.example.demo.Model.Student;
+import com.example.demo.Model.Employee;
 
 public interface IstudentRepository {
-    List<Student> findAll();
+    List<Employee> findAll();
 
-    Student findById(Integer id);
+    Employee findById(int id);
 
-    Student save(Student student);
+    Employee save(Employee student);
 
-    Student updateStudentById(int id, Student student);
+    Employee updateStudentById(int id, Employee student);
 
     void deleteStudentById(int id);
 
-    List<Student> searchStudents(String name, String phone, String startDate, String endDate, String gender);
+    List<Employee> searchStudents(String name, String phone, String startDate, String endDate, String gender,
+            String tienluong);
 }

@@ -1,6 +1,9 @@
 package com.example.demo.Model;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
+
+import com.example.demo.Model.enums.Gender;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -15,12 +18,15 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor // tạo constructor không tham số
 // @RequiredArgsConstructor // tạo ra cho những thằng final
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Student {
+public class Employee {
     int id;
     String name;
     int code;
     String numberPhone;
     LocalDate birthDate;
-    String gender;
+    Gender gender;
+
+    BigDecimal salary;// tiền
+    // String salaryRange;// khoảng tiền
 
 }
