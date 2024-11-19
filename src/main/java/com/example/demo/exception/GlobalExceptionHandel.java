@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice // bắt mọi exception do mình định nghĩa
 public class GlobalExceptionHandel {
+
     // lắng nghe exception, hứng exception
     @ExceptionHandler(ApiException.class)
     public ResponseEntity<?> handleApiException(ApiException e) {
