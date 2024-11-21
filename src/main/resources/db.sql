@@ -28,10 +28,17 @@ CREATE TABLE matbang (
      ten VARCHAR(255) NOT NULL,         -- Tên mặt bằng
      diachi VARCHAR(255) NOT NULL,      -- Địa chỉ mặt bằng
      dientich DOUBLE NOT NULL,          -- Diện tích mặt bằng
-     loaiMatbang VARCHAR(50) NOT NULL,  -- Loại mặt bằng (Ví dụ: Nhà ở, Văn phòng, Kinh doanh)
+     loaiMatbangId VARCHAR(50) NOT NULL,  -- Loại mặt bằng (Ví dụ: Nhà ở, Văn phòng, Kinh doanh)
      giathue DOUBLE NOT NULL,           -- Giá thuê
      ngaythue DATE NOT NULL             -- Ngày thuê
 );
+
+CREATE TABLE matbang (
+     loaiMatbangId INT PRIMARY KEY AUTO_INCREMENT, -- ID là khóa chính, tự động tăng
+     tenMatBang VARCHAR(255) NOT NULL,         -- Tên mặt bằng
+);
+
+
 INSERT INTO matbang (ten, diachi, dientich, loaiMatbang, giathue, ngaythue) VALUES
     ('Mặt bằng 1', '123 Đường A, Quận 1', 120.5, 'Nhà ở', 15000000.00, '2023-11-01'),
     ('Mặt bằng 2', '456 Đường B, Quận 2', 80.0, 'Văn phòng', 20000000.00, '2023-10-15'),

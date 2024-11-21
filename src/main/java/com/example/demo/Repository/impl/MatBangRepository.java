@@ -29,7 +29,7 @@ public class MatBangRepository implements IMatBangRepository {
                         .ten(resultSet.getString("ten"))
                         .diachi(resultSet.getString("diachi"))
                         .dientich(resultSet.getDouble("dientich"))
-                        .loaiMatbang(resultSet.getString("loaiMatbang"))
+                        .loaiMatbang(resultSet.getInt("loaiMatbang"))
                         .giathue(resultSet.getDouble("giathue"))
                         .ngaythue(resultSet.getDate("ngaythue").toLocalDate()) // Sửa chuyển đổi ngày tháng
                         .build());
@@ -41,7 +41,7 @@ public class MatBangRepository implements IMatBangRepository {
     }
 
     @Override
-    public List<MatBang> searchMatBang(int id, String ten, String diachi, Double dientich, String loaimatbang,
+    public List<MatBang> searchMatBang(int id, String ten, String diachi, Double dientich, Integer loaimatbang,
             Double giathue, String startngaythue) {
         List<MatBang> matbangs = new ArrayList<>();
         StringBuilder query = new StringBuilder("SELECT * FROM matbang WHERE 1=1");
@@ -58,9 +58,9 @@ public class MatBangRepository implements IMatBangRepository {
         if (dientich != null) {
             query.append(" AND dientich >= ?");
         }
-        if (loaimatbang != null && !loaimatbang.isEmpty()) {
-            query.append(" AND loaiMatbang = ?");
-        }
+        // if (loaimatbang != null && !loaimatbang.isEmpty()) {
+        // query.append(" AND loaiMatbang = ?");
+        // }
         if (giathue != null) {
             query.append(" AND giathue >= ?");
         }
@@ -85,9 +85,9 @@ public class MatBangRepository implements IMatBangRepository {
             if (dientich != null) {
                 preparedStatement.setDouble(index++, dientich);
             }
-            if (loaimatbang != null && !loaimatbang.isEmpty()) {
-                preparedStatement.setString(index++, loaimatbang);
-            }
+            // if (loaimatbang != null && !loaimatbang.isEmpty()) {
+            // preparedStatement.setString(index++, loaimatbang);
+            // }
             if (giathue != null) {
                 preparedStatement.setDouble(index++, giathue);
             }
@@ -103,7 +103,7 @@ public class MatBangRepository implements IMatBangRepository {
                             .ten(resultSet.getString("ten"))
                             .diachi(resultSet.getString("diachi"))
                             .dientich(resultSet.getDouble("dientich"))
-                            .loaiMatbang(resultSet.getString("loaiMatbang"))
+                            .loaiMatbang(resultSet.getInt("loaiMatbang"))
                             .giathue(resultSet.getDouble("giathue"))
                             .ngaythue(resultSet.getDate("ngaythue").toLocalDate())
                             .build());
