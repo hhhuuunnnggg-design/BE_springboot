@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class BaseRepository {
-    private static String jdbcURL = "jdbc:mysql://localhost:3306/student_management"; // Địa chỉ của DB
+    private static String jdbcURL = "jdbc:mysql://localhost:3306/bat_dong_san"; // Địa chỉ của DB
     private static String jdbcUsername = "root"; // Tên người dùng
     private static String jdbcPassword = ""; // Mật khẩu
     private static Connection connection;
