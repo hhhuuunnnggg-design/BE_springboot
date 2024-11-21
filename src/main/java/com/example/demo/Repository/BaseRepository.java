@@ -7,7 +7,7 @@ import java.sql.SQLException;
 public class BaseRepository {
     private static String jdbcURL = "jdbc:mysql://localhost:3306/student_management"; // Địa chỉ của DB
     private static String jdbcUsername = "root"; // Tên người dùng
-    private static String jdbcPassword = "12345678"; // Mật khẩu
+    private static String jdbcPassword = ""; // Mật khẩu
     private static Connection connection;
 
     /**

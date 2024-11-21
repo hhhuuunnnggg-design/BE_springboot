@@ -1,6 +1,9 @@
 package com.example.demo.Repository.impl;
 
 import java.math.BigDecimal;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,6 +14,7 @@ import org.springframework.stereotype.Repository;
 
 import com.example.demo.Model.Employee;
 import com.example.demo.Model.enums.Gender;
+import com.example.demo.Repository.BaseRepository;
 import com.example.demo.Repository.IstudentRepository;
 import com.example.demo.exception.ApiException;
 import com.example.demo.exception.ErrorCode;
@@ -27,6 +31,61 @@ public class StudentRepository implements IstudentRepository {
                     new BigDecimal("15000000.0")),
             new Employee(4, "Duy", 5, "0395648952", LocalDate.parse("2002-11-10"), Gender.Other,
                     new BigDecimal("9500000.0"))));
+
+    // duyệt tất cả
+    // @Override
+    // public List<Employee> findAll() {
+    // List<Employee> employees = new ArrayList<>();
+    // String query = "SELECT id, name, code, numberPhone, birthDate, gender, salary
+    // FROM Employee";
+
+    // try (Connection connection = BaseRepository.getConnection();
+    // PreparedStatement preparedStatement = connection.prepareStatement(query);
+    // ResultSet resultSet = preparedStatement.executeQuery()) {
+
+    // while (resultSet.next()) {
+    // Employee employee = Employee.builder()
+    // .id(resultSet.getInt("id"))
+    // .name(resultSet.getString("name"))132s
+    // .code(resultSet.getInt("code"))
+    // .numberPhone(resultSet.getString("numberPhone"))
+    // .birthDate(resultSet.getDate("birthDate").toLocalDate())
+    // .gender(Gender.valueOf(resultSet.getString("gender")))
+    // .salary(resultSet.getBigDecimal("salary"))
+    // .build();
+    // employees.add(employee);
+    // }
+    // } catch (SQLException e) {
+    // e.printStackTrace();
+    // }
+
+    // return employees;
+    // }
+
+    @Override
+    public List<Employee> findAll() {
+        List<Employee> employees = new ArrayList<>();
+        String query = "SELECT * FROM employee"; // Sửa chính tả SQL
+
+        try (PreparedStatement preparedStatement = BaseRepository.getConnection().prepareStatement(query);
+                ResultSet resultSet = preparedStatement.executeQuery()) {
+
+            while (resultSet.next()) {
+                employees.add(Employee.builder()
+                        .id(resultSet.getInt("id"))
+                        .name(resultSet.getString("name"))
+                        .code(resultSet.getInt("code"))
+                        .numberPhone(resultSet.getString("numberPhone"))
+                        .birthDate(resultSet.getDate("birthDate").toLocalDate()) // Sửa chuyển đổi ngày tháng
+                        .gender(Gender.valueOf(resultSet.getString("gender"))) // Sửa chuyển đổi enum Gender
+                        .salary(resultSet.getBigDecimal("salary")) // Thêm salary
+                        .build());
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error while fetching employees", e);
+        }
+        return employees;
+    }
 
     // tìm theo id
     @Override
@@ -71,12 +130,6 @@ public class StudentRepository implements IstudentRepository {
                     }
                 })
                 .collect(Collectors.toList());
-    }
-
-    // duyệt tất cả
-    @Override
-    public List<Employee> findAll() {
-        return students;
     }
 
     // thêm sv

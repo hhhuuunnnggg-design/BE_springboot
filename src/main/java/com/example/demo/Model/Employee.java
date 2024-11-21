@@ -5,11 +5,7 @@ import java.time.LocalDate;
 
 import com.example.demo.Model.enums.Gender;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 @Getter
@@ -17,6 +13,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor // tạo constructor có tham số
 @NoArgsConstructor // tạo constructor không tham số
 // @RequiredArgsConstructor // tạo ra cho những thằng final
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Employee {
     int id;

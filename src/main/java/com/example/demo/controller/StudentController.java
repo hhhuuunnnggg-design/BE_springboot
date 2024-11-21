@@ -60,6 +60,11 @@ public class StudentController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/all")
+    public List<Employee> getAllStudents() {
+        return studentService.findAll();
+    }
+
     // Xóa sinh viên theo id
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Employee>> deleteStudent(@PathVariable("id") int id) {
