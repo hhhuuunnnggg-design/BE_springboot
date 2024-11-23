@@ -22,7 +22,7 @@ public class MatBang {
     String ten;
     String diachi;
     double dientich;
-    int loaiMatbang;
+    String loaiMatbang;
     double giathue;
     LocalDate ngaythue;
 

@@ -25,7 +25,7 @@ public class MatBangSerice implements IMatBangService {
     }
 
     @Override
-    public List<MatBang> searchMatBang(int id, String ten, String diachi, Double dientich, Integer loaimatbang,
+    public List<MatBang> searchMatBang(int id, String ten, String diachi, Double dientich, String loaimatbang,
             Double giathue, String startngaythue) {
         return this.matBangRepository.searchMatBang(id, ten, diachi, dientich, loaimatbang, giathue, startngaythue);
     }

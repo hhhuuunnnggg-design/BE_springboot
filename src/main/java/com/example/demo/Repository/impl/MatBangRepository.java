@@ -18,61 +18,88 @@ public class MatBangRepository implements IMatBangRepository {
     @Override
     public List<MatBang> findAll() {
         List<MatBang> matbangs = new ArrayList<>();
-        String query = "SELECT * FROM matbang"; // Sửa chính tả SQL
+        String query = """
+                    SELECT
+                        mb.id,
+                        mb.ten,
+                        mb.diachi,
+                        mb.dientich,
+                        lmb.tenMatBang AS loaiMatbang, -- Lấy tên loại mặt bằng
+                        mb.giathue,
+                        mb.ngaythue
+                    FROM
+                        matbang mb
+                    JOIN
+                        loaimatbang lmb ON mb.loaiMatBangId = lmb.loaiMatBangId
+                """;
 
         try (PreparedStatement preparedStatement = BaseRepository.getConnection().prepareStatement(query);
                 ResultSet resultSet = preparedStatement.executeQuery()) {
 
             while (resultSet.next()) {
                 matbangs.add(MatBang.builder()
-                        .id(resultSet.getInt("id"))
-                        .ten(resultSet.getString("ten"))
-                        .diachi(resultSet.getString("diachi"))
-                        .dientich(resultSet.getDouble("dientich"))
-                        .loaiMatbang(resultSet.getInt("loaiMatbang"))
-                        .giathue(resultSet.getDouble("giathue"))
-                        .ngaythue(resultSet.getDate("ngaythue").toLocalDate()) // Sửa chuyển đổi ngày tháng
+                        .id(resultSet.getInt("id")) // Lấy ID
+                        .ten(resultSet.getString("ten")) // Lấy tên mặt bằng
+                        .diachi(resultSet.getString("diachi")) // Lấy địa chỉ
+                        .dientich(resultSet.getDouble("dientich")) // Lấy diện tích
+                        .loaiMatbang(resultSet.getString("loaiMatbang")) // Lấy tên loại mặt bằng
+                        .giathue(resultSet.getDouble("giathue")) // Lấy giá thuê
+                        .ngaythue(resultSet.getDate("ngaythue").toLocalDate()) // Lấy ngày thuê
                         .build());
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Error while fetching employees", e);
+            throw new RuntimeException("Error while fetching matbangs", e);
         }
         return matbangs;
     }
 
     @Override
-    public List<MatBang> searchMatBang(int id, String ten, String diachi, Double dientich, Integer loaimatbang,
+    public List<MatBang> searchMatBang(int id, String ten, String diachi, Double dientich, String loaimatbang,
             Double giathue, String startngaythue) {
         List<MatBang> matbangs = new ArrayList<>();
-        StringBuilder query = new StringBuilder("SELECT * FROM matbang WHERE 1=1");
+        StringBuilder query = new StringBuilder("""
+                    SELECT
+                        mb.id,
+                        mb.ten,
+                        mb.diachi,
+                        mb.dientich,
+                        lmb.tenMatBang AS loaiMatbang,
+                        mb.giathue,
+                        mb.ngaythue
+                    FROM
+                        matbang mb
+                    JOIN
+                        loaimatbang lmb ON mb.loaiMatBangId = lmb.loaiMatBangId
+                    WHERE 1=1
+                """);
 
         if (id > 0) {
-            query.append(" AND id = ?");
+            query.append(" AND mb.id = ?");
         }
         if (ten != null && !ten.isEmpty()) {
-            query.append(" AND ten LIKE ?");
+            query.append(" AND mb.ten LIKE ?");
         }
         if (diachi != null && !diachi.isEmpty()) {
-            query.append(" AND diachi LIKE ?");
+            query.append(" AND mb.diachi LIKE ?");
         }
         if (dientich != null) {
-            query.append(" AND dientich >= ?");
+            query.append(" AND mb.dientich >= ?");
         }
-        // if (loaimatbang != null && !loaimatbang.isEmpty()) {
-        // query.append(" AND loaiMatbang = ?");
-        // }
+        if (loaimatbang != null && !loaimatbang.isEmpty()) {
+            query.append(" AND lmb.tenMatBang = ?");
+        }
         if (giathue != null) {
-            query.append(" AND giathue >= ?");
+            query.append(" AND mb.giathue >= ?");
         }
         if (startngaythue != null && !startngaythue.isEmpty()) {
-            query.append(" AND ngaythue >= ?");
+            query.append(" AND mb.ngaythue >= ?");
         }
-        System.out.println(query);
+
+        System.out.println("Generated Query: " + query);
 
         try (PreparedStatement preparedStatement = BaseRepository.getConnection().prepareStatement(query.toString())) {
             int index = 1;
 
-            // Gán giá trị tham số
             if (id > 0) {
                 preparedStatement.setInt(index++, id);
             }
@@ -85,9 +112,9 @@ public class MatBangRepository implements IMatBangRepository {
             if (dientich != null) {
                 preparedStatement.setDouble(index++, dientich);
             }
-            // if (loaimatbang != null && !loaimatbang.isEmpty()) {
-            // preparedStatement.setString(index++, loaimatbang);
-            // }
+            if (loaimatbang != null && !loaimatbang.isEmpty()) {
+                preparedStatement.setString(index++, loaimatbang);
+            }
             if (giathue != null) {
                 preparedStatement.setDouble(index++, giathue);
             }
@@ -95,7 +122,6 @@ public class MatBangRepository implements IMatBangRepository {
                 preparedStatement.setDate(index++, java.sql.Date.valueOf(startngaythue));
             }
 
-            // Thực thi truy vấn và xử lý kết quả
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 while (resultSet.next()) {
                     matbangs.add(MatBang.builder()
@@ -103,7 +129,7 @@ public class MatBangRepository implements IMatBangRepository {
                             .ten(resultSet.getString("ten"))
                             .diachi(resultSet.getString("diachi"))
                             .dientich(resultSet.getDouble("dientich"))
-                            .loaiMatbang(resultSet.getInt("loaiMatbang"))
+                            .loaiMatbang(resultSet.getString("loaiMatbang"))
                             .giathue(resultSet.getDouble("giathue"))
                             .ngaythue(resultSet.getDate("ngaythue").toLocalDate())
                             .build());

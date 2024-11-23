@@ -24,7 +24,7 @@ public class MatBangController {
     IMatBangService MatBangSerice;
 
     @GetMapping("/all")
-    public List<MatBang> getAllStudents() {
+    public List<MatBang> getAllMatBangs() {
         return MatBangSerice.findAll();
     }
 
@@ -34,7 +34,7 @@ public class MatBangController {
             @RequestParam(value = "ten", required = false) String ten,
             @RequestParam(value = "diachi", required = false) String diachi,
             @RequestParam(value = "dientich", required = false) Double dientich,
-            @RequestParam(value = "loaimatbang", required = false) Integer loaimatbang,
+            @RequestParam(value = "loaimatbang", required = false) String loaimatbang,
             @RequestParam(value = "giathue", required = false) Double giathue,
             @RequestParam(value = "startngaythue", required = false) String startngaythue) {
 

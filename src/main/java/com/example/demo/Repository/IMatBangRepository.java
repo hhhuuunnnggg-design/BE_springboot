@@ -9,6 +9,6 @@ public interface IMatBangRepository {
 
     MatBang findById(int id);
 
-    List<MatBang> searchMatBang(int id, String ten, String diachi, Double dientich, Integer loaimatbang, Double giathue,
+    List<MatBang> searchMatBang(int id, String ten, String diachi, Double dientich, String loaimatbang, Double giathue,
             String startngaythue);
 }

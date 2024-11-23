@@ -18,34 +18,37 @@ INSERT INTO Employee (id, name, code, numberPhone, birthDate, gender, salary) VA
 
 SELECT * FROM Employee;
 
---  bất dong san
+-- ----------------------- bất dong san
 
+USE bds;
 
-USE bat_dong_san;
-
-CREATE TABLE matbang (
-     id INT PRIMARY KEY AUTO_INCREMENT, -- ID là khóa chính, tự động tăng
-     ten VARCHAR(255) NOT NULL,         -- Tên mặt bằng
-     diachi VARCHAR(255) NOT NULL,      -- Địa chỉ mặt bằng
-     dientich DOUBLE NOT NULL,          -- Diện tích mặt bằng
-     loaiMatbangId VARCHAR(50) NOT NULL,  -- Loại mặt bằng (Ví dụ: Nhà ở, Văn phòng, Kinh doanh)
-     giathue DOUBLE NOT NULL,           -- Giá thuê
-     ngaythue DATE NOT NULL             -- Ngày thuê
+-- Bảng phụ: Loại Mặt bằng
+CREATE TABLE loaimatbang (
+    loaiMatBangId INT PRIMARY KEY AUTO_INCREMENT, -- Khóa chính
+    tenMatBang VARCHAR(255) NOT NULL             -- Tên loại mặt bằng
 );
 
+-- Bảng chính: Mặt bằng
 CREATE TABLE matbang (
-     loaiMatbangId INT PRIMARY KEY AUTO_INCREMENT, -- ID là khóa chính, tự động tăng
-     tenMatBang VARCHAR(255) NOT NULL,         -- Tên mặt bằng
+    id INT PRIMARY KEY AUTO_INCREMENT,            -- Khóa chính
+    ten VARCHAR(255) NOT NULL,                    -- Tên mặt bằng
+    diachi VARCHAR(255) NOT NULL,                 -- Địa chỉ
+    dientich DOUBLE NOT NULL,                     -- Diện tích
+    loaiMatBangId INT NOT NULL,                   -- Khóa ngoại (liên kết đến bảng loaimatbang)
+    giathue DOUBLE NOT NULL,                      -- Giá thuê
+    ngaythue DATE NOT NULL,                       -- Ngày bắt đầu cho thuê
+    FOREIGN KEY (loaiMatBangId) REFERENCES loaimatbang(loaiMatBangId) -- Liên kết với bảng loaimatbang
 );
 
-
-INSERT INTO matbang (ten, diachi, dientich, loaiMatbang, giathue, ngaythue) VALUES
-    ('Mặt bằng 1', '123 Đường A, Quận 1', 120.5, 'Nhà ở', 15000000.00, '2023-11-01'),
-    ('Mặt bằng 2', '456 Đường B, Quận 2', 80.0, 'Văn phòng', 20000000.00, '2023-10-15'),
-    ('Mặt bằng 3', '789 Đường C, Quận 3', 200.0, 'Kinh doanh', 30000000.00, '2023-12-01'),
-    ('Mặt bằng 4', '101 Đường D, Quận 4', 150.5, 'Nhà ở', 18000000.00, '2023-09-10'),
-    ('Mặt bằng 5', '202 Đường E, Quận 5', 250.0, 'Kinh doanh', 40000000.00, '2023-08-25');
+INSERT INTO loaimatbang (tenMatBang) VALUES
+('Nhà ở'),
+('Văn phòng'),
+('Kinh doanh');
 
 
-
-
+INSERT INTO matbang (ten, diachi, dientich, loaiMatBangId, giathue, ngaythue) VALUES
+('Mặt bằng 1', '123 Đường A, Quận 1', 120.5, 1, 15000000.00, '2023-11-01'),
+('Mặt bằng 2', '456 Đường B, Quận 2', 80.0, 2, 20000000.00, '2023-10-15'),
+('Mặt bằng 3', '789 Đường C, Quận 3', 200.0, 3, 30000000.00, '2023-12-01'),
+('Mặt bằng 4', '101 Đường D, Quận 4', 150.5, 1, 18000000.00, '2023-09-10'),
+('Mặt bằng 5', '202 Đường E, Quận 5', 250.0, 3, 40000000.00, '2023-08-25');
