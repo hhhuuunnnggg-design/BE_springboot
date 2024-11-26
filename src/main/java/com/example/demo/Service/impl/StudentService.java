@@ -43,4 +43,9 @@ public class StudentService implements IstudentService {
         return this.studentRepository.searchStudents(name, phone, startDate, endDate, gender, tienluong);
     }
 
+    @Override
+    public Employee saveOrUpdate(Employee employee, Integer id) {
+        return this.studentRepository.saveOrUpdate(employee, id);
+    }
+
 }

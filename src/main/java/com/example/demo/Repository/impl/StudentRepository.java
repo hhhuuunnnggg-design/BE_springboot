@@ -1,5 +1,6 @@
 package com.example.demo.Repository.impl;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.hibernate.Session;
@@ -13,6 +14,49 @@ import com.example.demo.Repository.IstudentRepository;
 
 @Repository
 public class StudentRepository implements IstudentRepository {
+
+    public Employee saveOrUpdate(Employee employee, Integer idFromParam) {
+        Transaction transaction = null;
+
+        try (Session session = ConnectionUtil.sessionFactory.openSession()) {
+            transaction = session.beginTransaction();
+
+            // Ưu tiên ID từ param nếu có, ghi đè ID trong đối tượng employee
+            if (idFromParam != null) {
+                employee.setId(idFromParam);
+            }
+
+            if (employee.getId() != null) { // Nếu ID khác null, thực hiện cập nhật
+                Employee existingEmployee = findById(employee.getId());
+                if (existingEmployee != null) {
+                    // Cập nhật các trường cho Employee hiện có
+                    existingEmployee.setName(employee.getName());
+                    existingEmployee.setCode(employee.getCode());
+                    existingEmployee.setNumberPhone(employee.getNumberPhone());
+                    existingEmployee.setBirthDate(employee.getBirthDate());
+                    existingEmployee.setGender(employee.getGender());
+                    existingEmployee.setSalary(employee.getSalary());
+                    existingEmployee.setTest(employee.getTest());
+
+                    // Sử dụng merge để tránh lỗi NonUniqueObjectException
+                    session.merge(existingEmployee);
+                } else {
+                    return null;
+                }
+            } else { // Nếu ID null, thực hiện thêm mới
+                session.save(employee);
+            }
+
+            transaction.commit(); // Commit giao dịch nếu không có lỗi
+        } catch (Exception e) {
+            if (transaction != null && transaction.isActive()) {
+                transaction.rollback(); // Rollback nếu có lỗi
+            }
+            throw new RuntimeException("Failed to save or update employee: " + e.getMessage(), e);
+        }
+
+        return employee; // Trả về đối tượng đã được lưu hoặc cập nhật
+    }
 
     @Override
     public List<Employee> findAll() {
@@ -69,9 +113,33 @@ public class StudentRepository implements IstudentRepository {
     }
 
     @Override
-    public Employee updateStudentById(int id, Employee student) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updateStudentById'");
+    public Employee updateStudentById(int id, Employee updatedEmployee) {
+        Transaction transaction = null; // Khởi tạo biến để theo dõi giao dịch
+        Employee existingEmployee = findById(id);
+        if (existingEmployee == null) {
+            return null;
+        }
+        try (Session session = ConnectionUtil.sessionFactory.openSession()) {
+
+            transaction = session.beginTransaction(); // Bắt đầu giao dịch mới
+            existingEmployee.setName(updatedEmployee.getName());
+            existingEmployee.setCode(updatedEmployee.getCode());
+            existingEmployee.setNumberPhone(updatedEmployee.getNumberPhone());
+            existingEmployee.setBirthDate(updatedEmployee.getBirthDate());
+            existingEmployee.setGender(updatedEmployee.getGender());
+            existingEmployee.setSalary(updatedEmployee.getSalary());
+            existingEmployee.setTest(updatedEmployee.getTest());
+
+            session.update(existingEmployee);
+            transaction.commit(); // Commit giao dịch nếu không có lỗi
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            throw new RuntimeException("Failed to update employee: " + e.getMessage(), e);
+
+        }
+        return existingEmployee;
     }
 
     @Override
@@ -87,136 +155,50 @@ public class StudentRepository implements IstudentRepository {
     @Override
     public List<Employee> searchStudents(String name, String phone, String startDate, String endDate, String gender,
             String tienluong) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'searchStudents'");
+        List<Employee> employees = null;
+        try (Session session = ConnectionUtil.sessionFactory.openSession()) {
+            StringBuilder hql = new StringBuilder("FROM Employee e WHERE 1=1 ");
+
+            if (name != null && !name.isEmpty()) {
+                hql.append("AND e.name LIKE :name ");
+            }
+            if (phone != null && !phone.isEmpty()) {
+                hql.append("AND e.numberPhone LIKE :phone ");
+            }
+            if (startDate != null && !startDate.isEmpty() && endDate != null && !endDate.isEmpty()) {
+                hql.append("AND e.birthDate BETWEEN :startDate AND :endDate ");
+            }
+            if (gender != null && !gender.isEmpty()) {
+                hql.append("AND e.gender = :gender ");
+            }
+            if (tienluong != null && !tienluong.isEmpty()) {
+                hql.append("AND e.salary = :tienluong ");
+            }
+
+            Query<Employee> query = session.createQuery(hql.toString(), Employee.class);
+
+            if (name != null && !name.isEmpty()) {
+                query.setParameter("name", "%" + name + "%");
+            }
+            if (phone != null && !phone.isEmpty()) {
+                query.setParameter("phone", "%" + phone + "%");
+            }
+            if (startDate != null && !startDate.isEmpty() && endDate != null && !endDate.isEmpty()) {
+                query.setParameter("startDate", LocalDate.parse(startDate)); // Parse khi không rỗng
+                query.setParameter("endDate", LocalDate.parse(endDate));
+            }
+            if (gender != null && !gender.isEmpty()) {
+                query.setParameter("gender", gender);
+            }
+            if (tienluong != null && !tienluong.isEmpty()) {
+                query.setParameter("tienluong", tienluong);
+            }
+
+            employees = query.getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return employees;
     }
-
-    // private List<Employee> students = new ArrayList<>(Arrays.asList(
-    // new Employee(1, "Hùng", 10, "0213654215", LocalDate.parse("2000-01-01"),
-    // Gender.Female,
-    // new BigDecimal("4500000.0")),
-    // new Employee(2, "hùng", 8, "0787495636", LocalDate.parse("1999-02-15"),
-    // Gender.Female,
-    // new BigDecimal("7500000.0")),
-    // new Employee(3, "Huy", 10, "0213654219", LocalDate.parse("2001-06-20"),
-    // Gender.Male,
-    // new BigDecimal("15000000.0")),
-    // new Employee(4, "Duy", 5, "0395648952", LocalDate.parse("2002-11-10"),
-    // Gender.Other,
-    // new BigDecimal("9500000.0"))));
-
-    // @Override
-    // public List<Employee> findAll() {
-    // List<Employee> employees = new ArrayList<>();
-    // String query = "SELECT * FROM employee"; // Sửa chính tả SQL
-
-    // try (PreparedStatement preparedStatement =
-    // BaseRepository.getConnection().prepareStatement(query);
-    // ResultSet resultSet = preparedStatement.executeQuery()) {
-
-    // while (resultSet.next()) {
-    // employees.add(Employee.builder()
-    // .id(resultSet.getInt("id"))
-    // .name(resultSet.getString("name"))
-    // .code(resultSet.getInt("code"))
-    // .numberPhone(resultSet.getString("numberPhone"))
-    // .birthDate(resultSet.getDate("birthDate").toLocalDate()) // Sửa chuyển đổi
-    // ngày tháng
-    // .gender(Gender.valueOf(resultSet.getString("gender"))) // Sửa chuyển đổi enum
-    // Gender
-    // .salary(resultSet.getBigDecimal("salary")) // Thêm salary
-    // .build());
-    // }
-    // } catch (SQLException e) {
-    // throw new RuntimeException("Error while fetching employees", e);
-    // }
-    // return employees;
-    // }
-
-    // // tìm theo id
-    // @Override
-    // public Employee findById(int id) {
-    // for (Employee student : students) {
-    // if (student.getId() == id) {
-    // System.out.println("Danh sách sinh viên hiện tại: " + students);
-    // System.out.println("Tìm kiếm id: " + id);
-    // return student;
-    // }
-    // }
-    // return null;
-    // }
-
-    // @Override
-    // public List<Employee> searchStudents(String name, String phone, String
-    // startDate, String endDate, String gender,
-    // String tienluong) {
-    // LocalDate start = startDate.isEmpty() ? LocalDate.MIN :
-    // LocalDate.parse(startDate);
-    // LocalDate end = endDate.isEmpty() ? LocalDate.MAX : LocalDate.parse(endDate);
-
-    // return students.stream().filter(request ->
-    // request.getName().toLowerCase().contains(name.toLowerCase()))
-    // .filter(request -> request.getNumberPhone().contains(phone))
-    // .filter(request -> gender.isEmpty() ||
-    // request.getGender().name().equalsIgnoreCase(gender))
-    // .filter(request -> !request.getBirthDate().isBefore(start) &&
-    // !request.getBirthDate().isAfter(end))
-    // .filter(request -> {
-    // if (tienluong.isEmpty())
-    // return true;
-    // BigDecimal salary = request.getSalary();
-    // switch (tienluong.toLowerCase()) {
-    // case "lt5m":
-    // return salary.compareTo(new BigDecimal("5000000")) < 0;
-    // case "5-10":
-    // return salary.compareTo(new BigDecimal("5000000")) >= 0
-    // && salary.compareTo(new BigDecimal("10000000")) < 0;
-    // case "10-20":
-    // return salary.compareTo(new BigDecimal("10000000")) >= 0
-    // && salary.compareTo(new BigDecimal("20000000")) <= 0;
-    // case "gt20m":
-    // return salary.compareTo(new BigDecimal("20000000")) > 0;
-    // default:
-    // return true;
-    // }
-    // })
-    // .collect(Collectors.toList());
-    // }
-
-    // // thêm sv
-    // @Override
-    // public Employee save(Employee student) {
-    // student.setId((int) (Math.random() * 100000));
-    // students.add(student);
-    // return student;
-    // }
-
-    // // sua
-    // @Override
-    // public Employee updateStudentById(int id, Employee student) {
-    // Employee existingStudent = findById(id);
-    // if (existingStudent != null) {
-    // existingStudent.setName(student.getName());
-    // existingStudent.setCode(student.getCode());
-    // existingStudent.setNumberPhone(student.getNumberPhone());
-    // existingStudent.setBirthDate(student.getBirthDate());
-    // existingStudent.setGender(student.getGender());
-    // existingStudent.setSalary(student.getSalary());
-
-    // return existingStudent;
-    // } else {
-    // return null;
-    // }
-    // }
-
-    // @Override
-    // public void deleteStudentById(int id) {
-    // Employee student = findById(id);
-    // if (student != null) {
-    // students.remove(student);
-    // } else {
-    // throw new ApiException(ErrorCode.STUDENT_FIND_NOT);
-    // }
-    // }
 
 }

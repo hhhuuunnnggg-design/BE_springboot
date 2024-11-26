@@ -35,7 +35,8 @@ import lombok.experimental.FieldDefaults;
 public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int id;
+    // int id;
+    Integer id;
     String name;
     int code;
     String numberPhone;

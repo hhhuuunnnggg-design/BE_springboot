@@ -8,11 +8,11 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ApiException extends  RuntimeException{
+public class ApiException extends RuntimeException {
     ErrorCode errorCode;
 
-    public ApiException(ErrorCode errorCode){
-        super(errorCode.getMessage()); // gips báo lỗi ở terminal
+    public ApiException(ErrorCode errorCode) {
+        super(errorCode.getMessage());
         this.errorCode = errorCode;
     }
 }

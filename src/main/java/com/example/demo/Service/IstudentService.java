@@ -17,4 +17,6 @@ public interface IstudentService {
 
     List<Employee> searchStudents(String name, String phone, String startDate, String endDate, String gender,
             String tienluong);
+
+    Employee saveOrUpdate(Employee employee, Integer id);
 }

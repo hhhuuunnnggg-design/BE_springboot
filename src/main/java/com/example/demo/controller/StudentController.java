@@ -2,13 +2,11 @@ package com.example.demo.controller;
 
 import java.util.List;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -56,44 +54,69 @@ public class StudentController {
             @RequestParam(value = "endDate", defaultValue = "", required = false) String endDate) {
         List<Employee> foundStudents = studentService.searchStudents(name, phone, startDate, endDate, gender,
                 tienluong);
-        ApiResponse<List<Employee>> response = ApiResponse.<List<Employee>>builder().data(foundStudents).build();
+        ApiResponse<List<Employee>> response = ApiResponse.<List<Employee>>builder()
+                .code(200)
+                .message("đã tìm thấy")
+                .data(foundStudents).build();
         return ResponseEntity.ok(response);
-    }
-
-    @GetMapping("/all")
-    public List<Employee> getAllStudents() {
-        return studentService.findAll();
     }
 
     // Xóa sinh viên theo id
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Employee>> deleteStudent(@PathVariable("id") int id) {
         studentService.deleteStudentById(id);
-        ApiResponse<Employee> successResponse = new ApiResponse<>(200, "đã xóa thành công", null);
+        ApiResponse<Employee> successResponse = ApiResponse.<Employee>builder() // ApiResponse.<Employee>builder()
+                .code(200)
+                .message("đã xóa thành công").data(null).build();
         return ResponseEntity.ok(successResponse);
     }
 
-    // Cập nhật thông tin sinh viên theo id
-    @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<Employee>> updateStudentById(@PathVariable("id") int id,
-            @RequestBody Employee student) {
-        Employee updatedStudent = studentService.updateStudentById(id, student);
-        if (updatedStudent == null) {
+    // thêm hoặc cập nhật
+    @PostMapping("")
+    public ResponseEntity<ApiResponse<Employee>> saveOrUpdate(
+            @RequestBody Employee employee,
+            @RequestParam(value = "id", required = false) Integer id) {
+
+        Employee savedEmployee = studentService.saveOrUpdate(employee, id);
+        if (savedEmployee == null) {
             throw new ApiException(ErrorCode.STUDENT_FIND_NOT);
         }
-        ApiResponse<Employee> response = new ApiResponse<>(200, "đã cập nhật thành công", updatedStudent);
+        if (id == null) {
+            ApiResponse<Employee> response = new ApiResponse<>(200, "tạo Employee mới thành công", savedEmployee);
+            return ResponseEntity.ok(response);
+        }
+        ApiResponse<Employee> response = new ApiResponse<>(200, "đã cập nhật thành công", savedEmployee);
         return ResponseEntity.ok(response);
     }
 
-    // thêm sinh viên
-    @PostMapping("")
-    public ResponseEntity<ApiResponse<Employee>> create(@RequestBody Employee student) {
-        if (student == null) {
-            throw new ApiException(ErrorCode.STUDENT_FIND_NOT);
-        }
-        return ResponseEntity.status(HttpStatus.CREATED).body(
-                ApiResponse.<Employee>builder().data(studentService.save(student)).build());
+    // @GetMapping("/all")
+    // public List<Employee> getAllStudents() {
+    // return studentService.findAll();
+    // }
 
-    }
+    // thêm sinh viên
+    // @PostMapping("")
+    // public ResponseEntity<ApiResponse<Employee>> create(@RequestBody Employee
+    // student) {
+    // if (student == null) {
+    // throw new ApiException(ErrorCode.STUDENT_FIND_NOT);
+    // }
+    // return ResponseEntity.status(HttpStatus.CREATED).body(
+    // ApiResponse.<Employee>builder().data(studentService.save(student)).build());
+    // }
+
+    // Cập nhật thông tin sinh viên theo id
+    // @PutMapping("/{id}")
+    // public ResponseEntity<ApiResponse<Employee>>
+    // updateStudentById(@PathVariable("id") int id,
+    // @RequestBody Employee student) {
+    // Employee updatedStudent = studentService.updateStudentById(id, student);
+    // if (updatedStudent == null) {
+    // throw new ApiException(ErrorCode.STUDENT_FIND_NOT);
+    // }
+    // ApiResponse<Employee> response = new ApiResponse<>(200, "đã cập nhật thành
+    // công", updatedStudent);
+    // return ResponseEntity.ok(response);
+    // }
 
 }
