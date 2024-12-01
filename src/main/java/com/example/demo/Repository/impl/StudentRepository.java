@@ -15,13 +15,29 @@ import com.example.demo.Repository.IstudentRepository;
 @Repository
 public class StudentRepository implements IstudentRepository {
 
+    @Override
+    public List<Employee> findAll() {
+        Session session = ConnectionUtil.sessionFactory.openSession(); // Bước 1: Mở phiên làm việc (Session) từ
+                                                                       // ConnectionUtil
+        List<Employee> students = null;
+        try {
+            students = session.createQuery("FROM Employee").getResultList(); // Bước 2: Sử dụng HQL để lấy danh sách
+                                                                             // sinh
+                                                                             // viên
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            session.close(); // Bước 3: Đóng phiên làm việc sau khi lấy danh sách xong
+        }
+        return students;
+    }
+
     public Employee saveOrUpdate(Employee employee, Integer idFromParam) {
         Transaction transaction = null;
 
         try (Session session = ConnectionUtil.sessionFactory.openSession()) {
             transaction = session.beginTransaction();
 
-            // Ưu tiên ID từ param nếu có, ghi đè ID trong đối tượng employee
             if (idFromParam != null) {
                 employee.setId(idFromParam);
             }
@@ -43,36 +59,19 @@ public class StudentRepository implements IstudentRepository {
                 } else {
                     return null;
                 }
-            } else { // Nếu ID null, thực hiện thêm mới
+            } else {
                 session.save(employee);
             }
 
-            transaction.commit(); // Commit giao dịch nếu không có lỗi
+            transaction.commit();
         } catch (Exception e) {
             if (transaction != null && transaction.isActive()) {
-                transaction.rollback(); // Rollback nếu có lỗi
+                transaction.rollback();
             }
             throw new RuntimeException("Failed to save or update employee: " + e.getMessage(), e);
         }
 
         return employee; // Trả về đối tượng đã được lưu hoặc cập nhật
-    }
-
-    @Override
-    public List<Employee> findAll() {
-        Session session = ConnectionUtil.sessionFactory.openSession(); // Bước 1: Mở phiên làm việc (Session) từ
-                                                                       // ConnectionUtil
-        List<Employee> students = null;
-        try {
-            students = session.createQuery("FROM Employee").getResultList(); // Bước 2: Sử dụng HQL để lấy danh sách
-                                                                             // sinh
-                                                                             // viên
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            session.close(); // Bước 3: Đóng phiên làm việc sau khi lấy danh sách xong
-        }
-        return students;
     }
 
     @Override
@@ -90,56 +89,6 @@ public class StudentRepository implements IstudentRepository {
             session.close(); // Đóng phiên làm việc sau khi tìm kiếm xong
         }
         return employee;
-    }
-
-    @Override
-    public Employee save(Employee student) {
-        try (Session session = ConnectionUtil.sessionFactory.openSession()) {
-            Transaction transaction = session.beginTransaction();
-
-            try {
-
-                session.saveOrUpdate(student);
-
-                transaction.commit();
-            } catch (Exception e) {
-                if (transaction != null) {
-                    transaction.rollback(); // Rollback nếu có lỗi
-                }
-                throw new RuntimeException(e);
-            }
-        }
-        return student;
-    }
-
-    @Override
-    public Employee updateStudentById(int id, Employee updatedEmployee) {
-        Transaction transaction = null; // Khởi tạo biến để theo dõi giao dịch
-        Employee existingEmployee = findById(id);
-        if (existingEmployee == null) {
-            return null;
-        }
-        try (Session session = ConnectionUtil.sessionFactory.openSession()) {
-
-            transaction = session.beginTransaction(); // Bắt đầu giao dịch mới
-            existingEmployee.setName(updatedEmployee.getName());
-            existingEmployee.setCode(updatedEmployee.getCode());
-            existingEmployee.setNumberPhone(updatedEmployee.getNumberPhone());
-            existingEmployee.setBirthDate(updatedEmployee.getBirthDate());
-            existingEmployee.setGender(updatedEmployee.getGender());
-            existingEmployee.setSalary(updatedEmployee.getSalary());
-            existingEmployee.setTest(updatedEmployee.getTest());
-
-            session.update(existingEmployee);
-            transaction.commit(); // Commit giao dịch nếu không có lỗi
-        } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            throw new RuntimeException("Failed to update employee: " + e.getMessage(), e);
-
-        }
-        return existingEmployee;
     }
 
     @Override
@@ -172,7 +121,7 @@ public class StudentRepository implements IstudentRepository {
                 hql.append("AND e.gender = :gender ");
             }
             if (tienluong != null && !tienluong.isEmpty()) {
-                hql.append("AND e.salary = :tienluong ");
+                hql.append("AND e.salary > :tienluong ");
             }
 
             Query<Employee> query = session.createQuery(hql.toString(), Employee.class);
@@ -199,6 +148,18 @@ public class StudentRepository implements IstudentRepository {
             e.printStackTrace();
         }
         return employees;
+    }
+
+    @Override
+    public Employee save(Employee student) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'save'");
+    }
+
+    @Override
+    public Employee updateStudentById(int id, Employee student) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'updateStudentById'");
     }
 
 }

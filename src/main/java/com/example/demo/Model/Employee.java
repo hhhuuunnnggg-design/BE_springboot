@@ -3,6 +3,8 @@ package com.example.demo.Model;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import javax.persistence.Column;
+
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -39,14 +41,18 @@ public class Employee {
     Integer id;
     String name;
     int code;
+
+    // @Column(name = "number_phone")
     String numberPhone;
+
     LocalDate birthDate;
 
     @Enumerated(EnumType.STRING) // Đảm bảo enum được lưu dưới dạng chuỗi trong DB
     Gender gender;
+    String avatar;
     BigDecimal salary;
 
     @ManyToOne
-    @JoinColumn(name = "test_id") // Cột khóa ngoại kết nối với bảng "tests"
+    @JoinColumn(name = "test_id")
     Tests test;
 }

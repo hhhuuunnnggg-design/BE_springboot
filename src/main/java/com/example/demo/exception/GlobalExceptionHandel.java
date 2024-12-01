@@ -21,12 +21,4 @@ public class GlobalExceptionHandel {
                         .build());
     }
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<?> handleIllegalArgumentException(IllegalArgumentException e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                ApiResponse.builder()
-                        .code(400)
-                        .message("Invalid Input: " + e.getMessage())
-                        .build());
-    }
 }

@@ -89,34 +89,5 @@ public class StudentController {
         return ResponseEntity.ok(response);
     }
 
-    // @GetMapping("/all")
-    // public List<Employee> getAllStudents() {
-    // return studentService.findAll();
-    // }
-
-    // thêm sinh viên
-    // @PostMapping("")
-    // public ResponseEntity<ApiResponse<Employee>> create(@RequestBody Employee
-    // student) {
-    // if (student == null) {
-    // throw new ApiException(ErrorCode.STUDENT_FIND_NOT);
-    // }
-    // return ResponseEntity.status(HttpStatus.CREATED).body(
-    // ApiResponse.<Employee>builder().data(studentService.save(student)).build());
-    // }
-
-    // Cập nhật thông tin sinh viên theo id
-    // @PutMapping("/{id}")
-    // public ResponseEntity<ApiResponse<Employee>>
-    // updateStudentById(@PathVariable("id") int id,
-    // @RequestBody Employee student) {
-    // Employee updatedStudent = studentService.updateStudentById(id, student);
-    // if (updatedStudent == null) {
-    // throw new ApiException(ErrorCode.STUDENT_FIND_NOT);
-    // }
-    // ApiResponse<Employee> response = new ApiResponse<>(200, "đã cập nhật thành
-    // công", updatedStudent);
-    // return ResponseEntity.ok(response);
-    // }
 
 }
